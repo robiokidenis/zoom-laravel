@@ -1,4 +1,5 @@
 <?php
+
 namespace Jubaer\Zoom;
 
 use GuzzleHttp\Client;
@@ -170,9 +171,8 @@ class Zoom
 
             return [
                 'status' => true,
-                'data' => $previousMeetings]
-            ;
-
+                'data' => $previousMeetings
+            ];
         } catch (\Throwable $th) {
             return [
                 'status' => false,
@@ -257,7 +257,6 @@ class Zoom
                 'message' => $th->getMessage(),
             ];
         }
-
     }
 
     // recover meeting
@@ -317,6 +316,244 @@ class Zoom
                 'message' => $th->getMessage(),
             ];
         }
+    }
 
+    public function createWebinar(array $data)
+    {
+        try {
+            $response = $this->client->request('POST', 'users/me/webinars', [
+                'json' => $data,
+            ]);
+            $res = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $res,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Update webinar
+    public function updateWebinar(string $webinarId, array $data)
+    {
+        try {
+            $response = $this->client->request('PATCH', 'webinars/' . $webinarId, [
+                'json' => $data,
+            ]);
+            $res = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $res,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Get webinar details
+    public function getWebinar(string $webinarId)
+    {
+        try {
+            $response = $this->client->request('GET', 'webinars/' . $webinarId);
+            $data = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Get all webinars
+    public function getAllWebinar()
+    {
+        try {
+            $response = $this->client->request('GET', 'users/me/webinars');
+            $data = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Delete webinar
+    public function deleteWebinar(string $webinarId)
+    {
+        try {
+            $response = $this->client->request('DELETE', 'webinars/' . $webinarId);
+            if ($response->getStatusCode() === 204) {
+                return [
+                    'status' => true,
+                    'message' => 'Webinar Deleted Successfully',
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'message' => 'Something went wrong',
+                ];
+            }
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // End webinar
+    public function endWebinar($webinarId)
+    {
+        try {
+            $response = $this->client->request('PUT', 'webinars/' . $webinarId . '/status', [
+                'json' => [
+                    'action' => 'end',
+                ],
+            ]);
+            if ($response->getStatusCode() === 204) {
+                return [
+                    'status' => true,
+                    'message' => 'Webinar Ended Successfully',
+                ];
+            } else {
+                return [
+                    'status' => false,
+                    'message' => 'Something went wrong',
+                ];
+            }
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Get webinar participants
+    public function getWebinarParticipants(string $webinarId)
+    {
+        try {
+            $response = $this->client->request('GET', 'webinars/' . $webinarId . '/registrants');
+            $data = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Add webinar registrant
+    public function addWebinarRegistrant(string $webinarId, array $data)
+    {
+        try {
+            $response = $this->client->request('POST', 'webinars/' . $webinarId . '/registrants', [
+                'json' => $data,
+            ]);
+            $res = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $res,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Get past webinars
+    public function getPastWebinars()
+    {
+        try {
+            $response = $this->client->request('GET', 'users/me/webinars?type=past');
+            $data = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Get upcoming webinars
+    public function getUpcomingWebinars()
+    {
+        try {
+            $response = $this->client->request('GET', 'users/me/webinars?type=upcoming');
+            $data = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Get webinar panelists
+    public function getWebinarPanelists(string $webinarId)
+    {
+        try {
+            $response = $this->client->request('GET', 'webinars/' . $webinarId . '/panelists');
+            $data = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $data,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
+    }
+
+    // Add webinar panelists
+    public function addWebinarPanelists(string $webinarId, array $data)
+    {
+        try {
+            $response = $this->client->request('POST', 'webinars/' . $webinarId . '/panelists', [
+                'json' => $data,
+            ]);
+            $res = json_decode($response->getBody(), true);
+            return [
+                'status' => true,
+                'data' => $res,
+            ];
+        } catch (\Throwable $th) {
+            return [
+                'status' => false,
+                'message' => $th->getMessage(),
+            ];
+        }
     }
 }
